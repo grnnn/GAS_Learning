@@ -3,6 +3,7 @@
 
 #include "Player/AuraPlayerController.h"
 
+#include "Interaction/IHightlightable.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -10,6 +11,13 @@
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -50,5 +58,27 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 	{
 		ControlledPawn->AddMovementInput(Forward, InputVector.Y);
 		ControlledPawn->AddMovementInput(Right, InputVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit)
+		return;
+
+	LastCursorHit = CurrentCursorHit;
+	CurrentCursorHit = CursorHit.GetActor();
+	if (LastCursorHit == CurrentCursorHit)
+		return;
+	
+	if (LastCursorHit)
+	{
+		LastCursorHit->UnHighlight();
+	}
+	if (CurrentCursorHit)
+	{
+		CurrentCursorHit->Highlight();
 	}
 }
