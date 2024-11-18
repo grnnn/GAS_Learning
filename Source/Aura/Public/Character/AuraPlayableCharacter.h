@@ -6,6 +6,8 @@
 #include "Character/AuraCharacterBase.h"
 #include "AuraPlayableCharacter.generated.h"
 
+class APlayerState;
+
 /**
  * 
  */
@@ -15,4 +17,10 @@ class AURA_API AAuraPlayableCharacter : public AAuraCharacterBase
 	GENERATED_BODY()
 public:
 	AAuraPlayableCharacter();
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
+private:
+	void SetAbilitySystemPointers();
 };
