@@ -23,4 +23,5 @@ public:
 
 private:
 	void SetAbilitySystemPointers();
+	void InitOverlay();
 };
