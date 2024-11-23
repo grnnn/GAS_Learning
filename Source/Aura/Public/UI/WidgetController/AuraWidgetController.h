@@ -56,6 +56,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 
+	virtual void BroadcastInitialValues() {}
+	virtual void BindCallbacksToDependencies() {}
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="Widget Controller")
 	TObjectPtr<APlayerController> PlayerController;
