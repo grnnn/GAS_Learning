@@ -11,8 +11,8 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	
 	OnHealthChanged.Broadcast(Attributes->GetHealth());
 	OnMaxHealthChanged.Broadcast(Attributes->GetMaxHealth());
-	OnManaChanged.Broadcast(Attributes->GetMaxHealth());
-	OnMaxManaChanged.Broadcast(Attributes->GetMaxHealth());
+	OnManaChanged.Broadcast(Attributes->GetMana());
+	OnMaxManaChanged.Broadcast(Attributes->GetMaxMana());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
