@@ -30,7 +30,7 @@ void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, TSubclassOf<UGameplayEf
 	check(EffectClass);
 	auto EffectContextHandle = AbilitySystem->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
-	auto EffectSpecHandle = AbilitySystem->MakeOutgoingSpec(EffectClass, 1.f, EffectContextHandle);
+	auto EffectSpecHandle = AbilitySystem->MakeOutgoingSpec(EffectClass, ActorLevel, EffectContextHandle);
 	auto ActiveEffectHandle = AbilitySystem->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 
 	auto DurationPolicy = EffectSpecHandle.Data->Def->DurationPolicy;

@@ -69,6 +69,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
 	TArray<FGameplayEffectApplication> GameplayEffects;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	float ActorLevel = 1.f;
+
 private:
 	TArray<FActiveGameplayEffectHandle> ActiveOnEndOverlapEffects;
 };
