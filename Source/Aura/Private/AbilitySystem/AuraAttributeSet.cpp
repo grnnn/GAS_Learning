@@ -9,7 +9,7 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(50.f);
+	InitHealth(10.f);
 	InitMaxHealth(100.f);
 	InitMana(5.f);
 	InitMaxMana(10.f);
@@ -19,10 +19,27 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	// primary
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Strength, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Dexterity, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
+
+	// secondary
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Armor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, BlockChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, CriticalHitDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, CriticalHitResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+
+	// vital
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 }
 
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -99,7 +116,21 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	}
 }
 
-GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Health)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Strength)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Intelligence)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Dexterity)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Vigor)
+
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Armor)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, ArmorPenetration)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, BlockChance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, CriticalHitChance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, CriticalHitDamage)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, CriticalHitResistance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, HealthRegeneration)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, ManaRegeneration)
 GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, MaxHealth)
-GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Mana)
 GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, MaxMana)
+
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Health)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Mana)
