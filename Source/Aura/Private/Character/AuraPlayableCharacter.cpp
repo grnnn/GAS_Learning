@@ -36,13 +36,21 @@ void AAuraPlayableCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 AAuraPlayableCharacter::GetCombatLevel()
+{
+	auto AuraPlayerState = GetPlayerStateChecked<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->GetCombatLevel();
+}
+
 void AAuraPlayableCharacter::InitAbilityActorInfo()
 {
 	Super::InitAbilityActorInfo();
 
 	SetAbilitySystemPointers();
 	InitOverlay();
-	InitializePrimaryAttributes();
+	InitializeDefaultAttributes();
 }
 
 void AAuraPlayableCharacter::SetAbilitySystemPointers()
