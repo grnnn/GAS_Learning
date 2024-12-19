@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UAuraInputConfig;
 struct FInputActionValue;
 class IIHightlightable;
 class UInputMappingContext;
 class UInputAction;
+class UAuraAbilitySystemComponent;
 
 
 UCLASS()
@@ -30,6 +34,10 @@ private:
 	// fncs
 	void Move(const FInputActionValue& Value);
 	void CursorTrace();
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+	UAuraAbilitySystemComponent* GetAsc();
 
 	// properties
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -37,10 +45,17 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UAuraInputConfig> InputConfig;
 
 	// member vars
 	TScriptInterface<IIHightlightable> LastCursorHit;
 	TScriptInterface<IIHightlightable> CurrentCursorHit;
+
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
 };
 
 

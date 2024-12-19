@@ -27,6 +27,7 @@ void AAuraPlayableCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	InitAbilityActorInfo();
+	AddCharacterAbilities();
 }
 
 void AAuraPlayableCharacter::OnRep_PlayerState()

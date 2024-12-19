@@ -5,6 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -29,6 +31,15 @@ void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AAuraCharacterBase::AddCharacterAbilities()
+{
+	auto AuraAsc = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	if (not HasAuthority())
+		return;
+
+	AuraAsc->AddCharacterAbilities(StartupAbilities);
 }
 
 void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectClass, float Level)
