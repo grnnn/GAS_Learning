@@ -6,9 +6,25 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "AuraGameplayTags.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Strength, Primary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Intelligence, Primary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Dexterity, Primary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Vigor, Primary)
+
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Armor, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(ArmorPenetration, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(BlockChance, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(CriticalHitChance, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(CriticalHitDamage, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(CriticalHitResistance, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(HealthRegeneration, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(ManaRegeneration, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(MaxHealth, Secondary)
+	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(MaxMana, Secondary)
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

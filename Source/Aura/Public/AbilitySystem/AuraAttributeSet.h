@@ -25,11 +25,18 @@
 		GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, AttrName, Old##AttrName); \
 	}
 
+#define GAMEPLAY_ATTRIBUTE_TAG_MAPPING(AttrName, TagSet) \
+	FGetGameplayAttribute Get##AttrName##;	\
+	Get##AttrName##.BindStatic(Get##AttrName##Attribute);	\
+	TagsToAttributes.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##AttrName##);
+
 #define GAMEPLAY_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
+DECLARE_DELEGATE_RetVal(FGameplayAttribute, FGetGameplayAttribute);
 
 USTRUCT()
 struct FEffectProperty
@@ -66,6 +73,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	
+	TMap<FGameplayTag, FGetGameplayAttribute> TagsToAttributes;
 
 	/**
 	 *	Primary Attributes
