@@ -14,6 +14,7 @@ class IIHightlightable;
 class UInputMappingContext;
 class UInputAction;
 class UAuraAbilitySystemComponent;
+class USplineComponent;
 
 
 UCLASS()
@@ -38,6 +39,7 @@ private:
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 	UAuraAbilitySystemComponent* GetAsc();
+	void AutoRun();
 
 	// properties
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -55,6 +57,18 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+	FVector CachedDestination;
+	float FollowTime = 0.f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.0f;
+	FHitResult CursorHit;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> MovementSpline;
 	
 };
 

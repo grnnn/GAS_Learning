@@ -4,11 +4,16 @@
 #include "Player/AuraPlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 
 #include "Interaction/IHightlightable.h"
 #include "EnhancedInputSubsystems.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+
+#include "Components/SplineComponent.h"
 
 #include "Input/AuraInputComponent.h"
 
@@ -16,13 +21,33 @@
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+	MovementSpline = CreateDefaultSubobject<USplineComponent>("MovementSpline");
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
 	CursorTrace();
+	AutoRun();
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (not bAutoRunning)
+		return;
+	
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = MovementSpline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector SplineDirection = MovementSpline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(SplineDirection);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -72,7 +97,6 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit)
 		return;
@@ -94,7 +118,12 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB))
+	{
+		bTargeting = CurrentCursorHit != nullptr;
+		bAutoRunning = false;
+	}
+	
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -102,15 +131,59 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	if (not GetAsc())
 		return;
 	
-	GetAsc()->AbilityInputTagReleased(InputTag);
+	if (not InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB) || bTargeting)
+	{
+		GetAsc()->AbilityInputTagReleased(InputTag);
+	}
+	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB))
+	{
+		// auto run
+		APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			auto NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination);
+			if (NavigationPath)
+			{
+				bAutoRunning = true;
+				MovementSpline->ClearSplinePoints();
+				for (const auto& PathPoint : NavigationPath->PathPoints)
+				{
+					MovementSpline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);
+				}
+				CachedDestination = NavigationPath->PathPoints.Last();
+				MovementSpline->UpdateSpline();
+			}
+		}
+		FollowTime = 0.f; // incremented in AbilityInputTagHeld
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
 	if (not GetAsc())
 		return;
+
+	if (not InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB) || bTargeting)
+	{
+		GetAsc()->AbilityInputTagHeld(InputTag);
+	}
+	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().Input_LMB))
+	{
+		// manual run
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		if (CursorHit.bBlockingHit)
+		{
+			CachedDestination = CursorHit.ImpactPoint;
+		}
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
 	
-	GetAsc()->AbilityInputTagHeld(InputTag);
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetAsc()
@@ -123,3 +196,5 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetAsc()
 
 	return AuraAbilitySystemComponent;
 }
+
+
