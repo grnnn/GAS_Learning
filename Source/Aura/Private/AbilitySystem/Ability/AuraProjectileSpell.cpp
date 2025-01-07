@@ -14,7 +14,10 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
 
+void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo)
+{
 	if (not HasAuthority(&ActivationInfo))
 		return;
 
