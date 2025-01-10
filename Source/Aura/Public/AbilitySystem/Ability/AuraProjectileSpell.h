@@ -20,7 +20,7 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable)
-	void FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo);
+	void FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;

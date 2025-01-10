@@ -16,7 +16,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo)
+void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation)
 {
 	if (not HasAuthority(&ActivationInfo))
 		return;
@@ -26,9 +26,12 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 		return;
 	
 	const FVector CombatLocation = CombatInterface->GetCombatSocketLocation();
+	FRotator Rotation = (TargetLocation - CombatLocation).Rotation();
+	Rotation.Pitch = 0; // We don't want the projectile to be aimed up or down
+	
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(CombatLocation);
-	// TODO: Set the rotation of the SpawnTransform to face the target
+	SpawnTransform.SetRotation(Rotation.Quaternion());
 	auto Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform,
 		GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
