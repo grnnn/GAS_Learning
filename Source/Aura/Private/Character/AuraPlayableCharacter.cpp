@@ -45,6 +45,15 @@ int32 AAuraPlayableCharacter::GetCombatLevel()
 	return AuraPlayerState->GetCombatLevel();
 }
 
+void AAuraPlayableCharacter::SetFacingLocation(const FVector& Location)
+{
+	if (UFunction* SetFacingTargetFunction = FindFunction(TEXT("SetFacingTarget")))
+	{
+		FVector TargetLocation = Location;
+		ProcessEvent(SetFacingTargetFunction, &TargetLocation);
+	}
+}
+
 void AAuraPlayableCharacter::InitAbilityActorInfo()
 {
 	Super::InitAbilityActorInfo();

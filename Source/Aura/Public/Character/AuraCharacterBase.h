@@ -30,6 +30,8 @@ protected:
 	virtual void InitAbilityActorInfo() {};
 	virtual void AddCharacterAbilities();
 	virtual FVector GetCombatSocketLocation() override;
+	
+	virtual void SetFacingLocation(const FVector& Location) override {};
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectClass, float Level = 1.f);
 	void InitializeDefaultAttributes();

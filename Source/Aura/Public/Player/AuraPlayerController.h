@@ -34,6 +34,8 @@ protected:
 private:
 	// fncs
 	void Move(const FInputActionValue& Value);
+	void ShiftPressed() { bShiftKeyPressed = true; }
+	void ShiftReleased() { bShiftKeyPressed = false; }
 	void CursorTrace();
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -47,6 +49,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
@@ -66,6 +71,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.0f;
 	FHitResult CursorHit;
+	bool bShiftKeyPressed = false;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> MovementSpline;

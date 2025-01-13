@@ -18,8 +18,8 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation)
 {
-	if (not HasAuthority(&ActivationInfo))
-		return;
+	// if (not HasAuthority(&ActivationInfo))
+	// 	return;
 
 	auto CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (not CombatInterface)

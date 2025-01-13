@@ -23,6 +23,8 @@ public:
 
 	// ICombatInterface
 	virtual int32 GetCombatLevel() override;
+	UFUNCTION(BlueprintCallable)
+	virtual void SetFacingLocation(const FVector& Location) override;
 
 protected:
 	virtual void InitAbilityActorInfo() override;
