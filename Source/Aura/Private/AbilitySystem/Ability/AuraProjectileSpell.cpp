@@ -3,6 +3,9 @@
 
 #include "AbilitySystem/Ability/AuraProjectileSpell.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+
 #include "Actor/AuraProjectile.h"
 
 #include "Interaction/CombatInterface.h"
@@ -18,9 +21,6 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation)
 {
-	// if (not HasAuthority(&ActivationInfo))
-	// 	return;
-
 	auto CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (not CombatInterface)
 		return;
@@ -36,7 +36,9 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 		GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	// TODO: Give the Projectile a GE Spec for causing damage
+	auto SourceAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+	auto SpecHandle = SourceAsc->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAsc->MakeEffectContext());
+	Projectile->DamageEffect = SpecHandle;
 
 	Projectile->FinishSpawning(SpawnTransform);
 }
