@@ -34,7 +34,7 @@ protected:
 	virtual void SetFacingLocation(const FVector& Location) override {};
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectClass, float Level = 1.f);
-	void InitializeDefaultAttributes();
+	virtual void InitializeDefaultAttributes();
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
