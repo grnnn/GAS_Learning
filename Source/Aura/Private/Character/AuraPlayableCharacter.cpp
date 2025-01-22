@@ -60,7 +60,7 @@ void AAuraPlayableCharacter::InitAbilityActorInfo()
 
 	SetAbilitySystemPointers();
 	InitOverlay();
-	InitializeDefaultAttributes();
+	InitializeDefaultData();
 }
 
 void AAuraPlayableCharacter::SetAbilitySystemPointers()

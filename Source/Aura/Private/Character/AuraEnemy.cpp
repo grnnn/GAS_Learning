@@ -3,11 +3,16 @@
 
 #include "Character/AuraEnemy.h"
 
+#include "AuraGameplayTags.h"
+
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
 #include "Components/WidgetComponent.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/EnemyWidgetController.h"
 
@@ -26,8 +31,10 @@ AAuraEnemy::AAuraEnemy()
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
 	CreateEnemyWidgetController();
+	RegisterGameplayTagEvents();
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
@@ -37,12 +44,13 @@ void AAuraEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
-	InitializeDefaultAttributes();
+	InitializeDefaultData();
 }
 
-void AAuraEnemy::InitializeDefaultAttributes()
+void AAuraEnemy::InitializeDefaultData()
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, Class, Level);
+	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
 }
 
 void AAuraEnemy::CreateEnemyWidgetController()
@@ -60,6 +68,16 @@ void AAuraEnemy::CreateEnemyWidgetController()
 	
 	EnemyWidgetController->BroadcastInitialValues();
 	EnemyWidgetController->BindCallbacksToDependencies();
+}
+
+void AAuraEnemy::RegisterGameplayTagEvents()
+{
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved)
+		.AddLambda([this](const FGameplayTag Tag, int32 Count)
+		{
+			bHitReacting = Count > 0;
+			GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0 : BaseWalkSpeed;
+		});
 }
 
 void AAuraEnemy::Highlight()

@@ -17,3 +17,8 @@ FVector ICombatInterface::GetCombatSocketLocation()
 void ICombatInterface::SetFacingLocation(const FVector& Location)
 {
 }
+
+UAnimMontage* ICombatInterface::GetHitReactMontage()
+{
+	return nullptr;
+}

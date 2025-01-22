@@ -5,9 +5,9 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 
 #include "Actor/AuraProjectile.h"
-
 #include "Interaction/CombatInterface.h"
 
 
@@ -38,6 +38,8 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 
 	auto SourceAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	auto SpecHandle = SourceAsc->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAsc->MakeEffectContext());
+	const float ProjectileDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Damage, ProjectileDamage);
 	Projectile->DamageEffect = SpecHandle;
 
 	Projectile->FinishSpawning(SpawnTransform);

@@ -29,12 +29,19 @@ public:
 	// ICombatInterface
 	virtual int32 GetCombatLevel() override;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
-	virtual void InitializeDefaultAttributes() override;
+	virtual void InitializeDefaultData() override;
 
 	void CreateEnemyWidgetController();
+	void RegisterGameplayTagEvents();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;

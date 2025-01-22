@@ -152,6 +152,28 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
         NewMaxMana = FMath::Floor(NewMaxMana);
         SetMaxMana(NewMaxMana);
     }
+	else if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0)
+		{
+			float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			bool bFatal = NewHealth <= 0.f;
+			if (bFatal)
+			{
+				// TODO: Die
+			}
+			else
+			{
+				FGameplayTagContainer Container;
+				Container.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.Target.AbilitySystemComponent->TryActivateAbilitiesByTag(Container);
+			}
+		}
+	}
 }
 
 GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Strength)

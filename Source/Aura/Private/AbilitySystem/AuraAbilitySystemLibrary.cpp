@@ -72,3 +72,17 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(UObject* WorldContex
 	}
 	
 }
+
+void UAuraAbilitySystemLibrary::GiveStartupAbilities(UObject* WorldContextObject, UAbilitySystemComponent* AscInOut)
+{
+	auto AuraGm = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (not AuraGm)
+		return;
+
+	auto SharedAbilities = AuraGm->CharacterClassInfo->SharedAbilities;
+	for (auto AbilityClass : SharedAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+		AscInOut->GiveAbility(AbilitySpec);
+	}
+}

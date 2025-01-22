@@ -37,6 +37,11 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+UAnimMontage* AAuraCharacterBase::GetHitReactMontage()
+{
+	return HitReactMontage;
+}
+
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -69,7 +74,7 @@ void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectCl
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data, GetAbilitySystemComponent());
 }
 
-void AAuraCharacterBase::InitializeDefaultAttributes()
+void AAuraCharacterBase::InitializeDefaultData()
 {
 	for (auto GameplayEffect : DefaultAttributes)
 	{

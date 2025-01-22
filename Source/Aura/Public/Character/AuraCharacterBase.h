@@ -6,7 +6,6 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
-
 #include "AuraCharacterBase.generated.h"
 
 class UGameplayAbility;
@@ -25,6 +24,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const;
 
+	virtual UAnimMontage* GetHitReactMontage() override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() {};
@@ -34,7 +35,7 @@ protected:
 	virtual void SetFacingLocation(const FVector& Location) override {};
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectClass, float Level = 1.f);
-	virtual void InitializeDefaultAttributes();
+	virtual void InitializeDefaultData();
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -54,4 +55,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };
