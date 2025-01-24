@@ -37,15 +37,35 @@ UAttributeSet* AAuraCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Dissolve();
+}
+
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage()
 {
 	return HitReactMontage;
 }
 
+void AAuraCharacterBase::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	MulticastHandleDeath();
+}
+
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AAuraCharacterBase::AddCharacterAbilities()
@@ -79,6 +99,22 @@ void AAuraCharacterBase::InitializeDefaultData()
 	for (auto GameplayEffect : DefaultAttributes)
 	{
 		ApplyEffectToSelf(GameplayEffect);
+	}
+}
+
+void AAuraCharacterBase::Dissolve()
+{
+	if (IsValid(DissolveMi))
+	{
+		UMaterialInstanceDynamic* DynamicMi = UMaterialInstanceDynamic::Create(DissolveMi, this);
+		GetMesh()->SetMaterial(0, DynamicMi);
+		StartDissolveTimeline(DynamicMi);
+	}
+	if (IsValid(WeaponDissolveMi))
+	{
+		UMaterialInstanceDynamic* DynamicMi = UMaterialInstanceDynamic::Create(WeaponDissolveMi, this);
+		Weapon->SetMaterial(0, DynamicMi);
+		StartWeaponDissolveTimeline(DynamicMi);
 	}
 }
 

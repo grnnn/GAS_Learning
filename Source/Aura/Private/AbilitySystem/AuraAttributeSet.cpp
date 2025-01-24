@@ -8,6 +8,8 @@
 #include "Net/UnrealNetwork.h"
 #include "AuraGameplayTags.h"
 
+#include "Interaction/CombatInterface.h"
+
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Strength, Primary)
@@ -164,7 +166,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			bool bFatal = NewHealth <= 0.f;
 			if (bFatal)
 			{
-				// TODO: Die
+				if (auto AsCombatInterface = Cast<ICombatInterface>(Props.Target.Actor))
+				{
+					AsCombatInterface->Die();
+				}
 			}
 			else
 			{

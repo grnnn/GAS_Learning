@@ -102,3 +102,9 @@ int32 AAuraEnemy::GetCombatLevel()
 {
 	return Level;
 }
+
+void AAuraEnemy::Die()
+{
+	SetLifeSpan(DeathLifespan);
+	Super::Die();
+}

@@ -28,12 +28,16 @@ public:
 
 	// ICombatInterface
 	virtual int32 GetCombatLevel() override;
+	virtual void Die() override;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bHitReacting = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 250.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float DeathLifespan = 5.f;
 
 protected:
 	virtual void BeginPlay() override;
