@@ -10,6 +10,10 @@
 
 #include "Interaction/CombatInterface.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "Player/AuraPlayerController.h"
+
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(Strength, Primary)
@@ -156,7 +160,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
     }
 	else if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		float LocalIncomingDamage = GetIncomingDamage();
+		float LocalIncomingDamage = FMath::Floor(GetIncomingDamage());
 		SetIncomingDamage(0.f);
 		if (LocalIncomingDamage > 0)
 		{
@@ -176,6 +180,15 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				FGameplayTagContainer Container;
 				Container.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 				Props.Target.AbilitySystemComponent->TryActivateAbilitiesByTag(Container);
+			}
+
+			if (Props.Source.Character != Props.Target.Character)
+			{
+				auto PlayerController = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.Source.Character, 0));
+				if (PlayerController)
+				{
+					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage);
+				}
 			}
 		}
 	}

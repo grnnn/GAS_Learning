@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UDamageTextComponent;
 class UAuraInputConfig;
 struct FInputActionValue;
 class IIHightlightable;
@@ -26,6 +26,12 @@ public:
 	AAuraPlayerController();
 
 	virtual void PlayerTick(float DeltaTime) override;
+
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(ACharacter* TargetCharacter, float Damage);
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void FreeDamageComponent(UDamageTextComponent* DamageText);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -72,10 +78,16 @@ private:
 	float AutoRunAcceptanceRadius = 50.0f;
 	FHitResult CursorHit;
 	bool bShiftKeyPressed = false;
+	TArray<TPair<UDamageTextComponent*, bool>> DamageTextPool;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> MovementSpline;
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	int DamageTextPoolSize = 20;
 };
 
 

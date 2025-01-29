@@ -5,23 +5,23 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
-
 #include "Interaction/IHightlightable.h"
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
-
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
-
 #include "Components/SplineComponent.h"
-
+#include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
 	MovementSpline = CreateDefaultSubobject<USplineComponent>("MovementSpline");
+
+	DamageTextPool.Init({nullptr, false}, DamageTextPoolSize);
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -29,6 +29,60 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 	AutoRun();
+}
+
+void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float Damage)
+{
+	check(DamageTextComponentClass);
+	if (not IsValid(TargetCharacter))
+		return;
+
+	UDamageTextComponent* DamageText = nullptr;
+	int InitialIndex = 0;
+	while (not DamageText)
+	{
+		for (int i = InitialIndex; i < DamageTextPool.Num(); i++)
+		{
+			if (not DamageTextPool[i].Key)
+			{
+				DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+				DamageTextPool[i].Value = true;
+				break;
+			}
+			if (DamageTextPool[i].Value == false)
+			{
+				DamageText = DamageTextPool[i].Key;
+				DamageTextPool[i].Value = true;
+				break;
+			}
+		}
+
+		if (not DamageText)
+		{
+			for (int i = 0; i < DamageTextPoolSize; i++)
+			{
+				DamageTextPool.Add({nullptr, false});
+			}
+			InitialIndex += DamageTextPoolSize;
+		}
+	}
+
+	DamageText->RegisterComponent();
+	DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	DamageText->SetDamageText(Damage);
+}
+
+void AAuraPlayerController::FreeDamageComponent_Implementation(UDamageTextComponent* DamageText)
+{
+	for (auto& Pair : DamageTextPool)
+	{
+		if (Pair.Key == DamageText)
+		{
+			Pair.Value = false;
+			DamageText->UnregisterComponent();
+			break;
+		}
+	}
 }
 
 void AAuraPlayerController::AutoRun()
