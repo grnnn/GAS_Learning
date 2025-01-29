@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class AComponentPoolContainer;
 class UDamageTextComponent;
 class UAuraInputConfig;
 struct FInputActionValue;
@@ -78,16 +79,13 @@ private:
 	float AutoRunAcceptanceRadius = 50.0f;
 	FHitResult CursorHit;
 	bool bShiftKeyPressed = false;
-	TArray<TPair<UDamageTextComponent*, bool>> DamageTextPool;
+	AComponentPoolContainer* DamageTextPoolContainer = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> MovementSpline;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	int DamageTextPoolSize = 20;
+	TSubclassOf<AComponentPoolContainer> DamageTextPoolClass;
 };
 
 

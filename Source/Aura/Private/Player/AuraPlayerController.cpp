@@ -10,6 +10,7 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Actor/ComponentPoolContainer.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
@@ -20,8 +21,6 @@ AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
 	MovementSpline = CreateDefaultSubobject<USplineComponent>("MovementSpline");
-
-	DamageTextPool.Init({nullptr, false}, DamageTextPoolSize);
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -33,56 +32,25 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float Damage)
 {
-	check(DamageTextComponentClass);
-	if (not IsValid(TargetCharacter))
+	check(DamageTextPoolContainer);
+	if (not IsValid(TargetCharacter) || not IsValid(DamageTextPoolContainer))
 		return;
 
-	UDamageTextComponent* DamageText = nullptr;
-	int InitialIndex = 0;
-	while (not DamageText)
-	{
-		for (int i = InitialIndex; i < DamageTextPool.Num(); i++)
-		{
-			if (not DamageTextPool[i].Key)
-			{
-				DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
-				DamageTextPool[i].Value = true;
-				break;
-			}
-			if (DamageTextPool[i].Value == false)
-			{
-				DamageText = DamageTextPool[i].Key;
-				DamageTextPool[i].Value = true;
-				break;
-			}
-		}
-
-		if (not DamageText)
-		{
-			for (int i = 0; i < DamageTextPoolSize; i++)
-			{
-				DamageTextPool.Add({nullptr, false});
-			}
-			InitialIndex += DamageTextPoolSize;
-		}
-	}
-
-	DamageText->RegisterComponent();
+	UDamageTextComponent* DamageText = CastChecked<UDamageTextComponent>(DamageTextPoolContainer->GetPooledComponent());
+	DamageText->Activate();
 	DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	DamageText->SetDamageText(Damage);
 }
 
 void AAuraPlayerController::FreeDamageComponent_Implementation(UDamageTextComponent* DamageText)
 {
-	for (auto& Pair : DamageTextPool)
-	{
-		if (Pair.Key == DamageText)
-		{
-			Pair.Value = false;
-			DamageText->UnregisterComponent();
-			break;
-		}
-	}
+	check(DamageTextPoolContainer);
+	if (not IsValid(DamageText) || not IsValid(DamageTextPoolContainer))
+		return;
+	
+	DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	DamageText->Deactivate();
+	DamageTextPoolContainer->ReturnToPool(DamageText);
 }
 
 void AAuraPlayerController::AutoRun()
@@ -122,6 +90,8 @@ void AAuraPlayerController::BeginPlay()
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
+
+	DamageTextPoolContainer = GetWorld()->SpawnActor<AComponentPoolContainer>(DamageTextPoolClass);
 }
 
 void AAuraPlayerController::SetupInputComponent()
