@@ -29,7 +29,7 @@ public:
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(ACharacter* TargetCharacter, float Damage);
+	void ShowDamageNumber(ACharacter* TargetCharacter, float Damage, bool bIsCritical, bool bIsBlocked);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void FreeDamageComponent(UDamageTextComponent* DamageText);

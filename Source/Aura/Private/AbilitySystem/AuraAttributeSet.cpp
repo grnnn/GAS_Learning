@@ -8,6 +8,8 @@
 #include "Net/UnrealNetwork.h"
 #include "AuraGameplayTags.h"
 
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+
 #include "Interaction/CombatInterface.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -187,7 +189,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				auto PlayerController = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.Source.Character, 0));
 				if (PlayerController)
 				{
-					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage);
+					bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+					bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked);
 				}
 			}
 		}

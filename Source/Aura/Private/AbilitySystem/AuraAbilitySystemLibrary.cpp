@@ -5,6 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 
+#include "AbilitySystem/AuraAbilityTypes.h"
+
 #include "Game/AuraGameModeBase.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -84,5 +86,41 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(UObject* WorldContextObject
 	{
 		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 		AscInOut->GiveAbility(AbilitySpec);
+	}
+}
+
+bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (auto Context = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return Context->IsCriticalHit();
+	}
+
+	return false;
+}
+
+bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (auto Context = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return Context->IsBlockedHit();
+	}
+
+	return false;
+}
+
+void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& ContextHandle, bool bValue)
+{
+	if (auto Context = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		Context->SetIsCriticalHit(bValue);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& ContextHandle, bool bValue)
+{
+	if (auto Context = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		Context->SetIsBlockedHit(bValue);
 	}
 }

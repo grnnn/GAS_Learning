@@ -30,7 +30,8 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float Damage)
+void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float Damage, bool bIsCritical,
+	bool bIsBlocked)
 {
 	check(DamageTextPoolContainer);
 	if (not IsValid(TargetCharacter) || not IsValid(DamageTextPoolContainer))
@@ -39,7 +40,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCh
 	UDamageTextComponent* DamageText = CastChecked<UDamageTextComponent>(DamageTextPoolContainer->GetPooledComponent());
 	DamageText->Activate();
 	DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	DamageText->SetDamageText(Damage);
+	DamageText->SetDamageText(Damage, bIsCritical, bIsBlocked);
 }
 
 void AAuraPlayerController::FreeDamageComponent_Implementation(UDamageTextComponent* DamageText)

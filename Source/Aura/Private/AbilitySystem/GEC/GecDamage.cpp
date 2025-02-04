@@ -5,6 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
+
+#include "AbilitySystem/AuraAbilityTypes.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 struct AuraDamageStatics
@@ -51,6 +53,7 @@ void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionPara
 	auto SourceActor = SourceAsc ? SourceAsc->GetOwner() : nullptr;
 	auto TargetActor = TargetAsc ? TargetAsc->GetOwner() : nullptr;
 	auto Spec = ExecutionParams.GetOwningSpec();
+	auto Context = static_cast<FAuraGameplayEffectContext*>(Spec.GetContext().Get());
 
 	FAggregatorEvaluateParameters EvalParams;
 	EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -68,19 +71,23 @@ void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionPara
 	// first apply armor
 	Damage -= FMath::Max(0.f,TargetArmor - ArmorPenetration);
 	// then apply critical hit chance
-	if ((FMath::Rand() % 100) <= FMath::Max(0.f,CriticalHitChance - TargetCriticalHitResistance))
+	bool bIsCriticalHit = (FMath::Rand() % 100) <= FMath::Max(0.f,CriticalHitChance - TargetCriticalHitResistance);
+	bool bIsBlock = (FMath::Rand() % 100) <= TargetBlockChance;
+	if (bIsCriticalHit)
 	{
 		Damage *= 2;
 		Damage += CriticalHitDamage;
 	}
 	// then apply block chance
-	else if ((FMath::Rand() % 100) <= TargetBlockChance)
+	else if (bIsBlock)
 	{
 		Damage /= 2;
 	}
 
 	FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
+	Context->SetIsCriticalHit(bIsCriticalHit);
+	Context->SetIsBlockedHit(bIsBlock);
 }
 
 float UGecDamage::GetAttributeValue(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
