@@ -59,7 +59,7 @@ void AAuraEnemy::CreateEnemyWidgetController()
 		return;
 
 	EnemyWidgetController = NewObject<UEnemyWidgetController>(this);
-	EnemyWidgetController->SetWidgetControllerParams(FWidgetControllerParams(nullptr, nullptr, AbilitySystemComponent, AttributeSet));
+	EnemyWidgetController->SetWidgetControllerParams(FWidgetControllerParams(nullptr, nullptr, AbilitySystemComponent, AttributeSet, nullptr));
 
 	if (auto Widget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{

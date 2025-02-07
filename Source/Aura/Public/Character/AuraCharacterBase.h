@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+struct FGameplayTag;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -29,6 +30,7 @@ public:
 
 	virtual UAnimMontage* GetHitReactMontage() override;
 	virtual void Die() override;
+	virtual TArray<FGameplayTag> GetResistances() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -69,6 +71,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMi;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage")
+	TArray<FGameplayTag> Resistances;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")

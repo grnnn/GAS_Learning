@@ -33,6 +33,11 @@ UAuraAttributeSet::UAuraAttributeSet()
 	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(ManaRegeneration, Secondary)
 	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(MaxHealth, Secondary)
 	GAMEPLAY_ATTRIBUTE_TAG_MAPPING(MaxMana, Secondary)
+
+	GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(Fire, Resistance, FireResistance)
+	GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(Lightning, Resistance, LightningResistance)
+	GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(Arcane, Resistance, ArcaneResistance)
+	GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(Physical, Resistance, PhysicalResistance)
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -60,6 +65,12 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	// vital
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
+
+	// resistances
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, FireResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, LightningResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, ArcaneResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
 }
 
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -82,7 +93,11 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 			 Attribute == GetHealthRegenerationAttribute() ||
 			 Attribute == GetManaRegenerationAttribute() ||
 			 Attribute == GetMaxHealthAttribute() ||
-			 Attribute == GetMaxManaAttribute())
+			 Attribute == GetMaxManaAttribute() ||
+			 Attribute == GetFireResistanceAttribute() ||
+			 Attribute == GetLightningResistanceAttribute() ||
+			 Attribute == GetArcaneResistanceAttribute() ||
+			 Attribute == GetPhysicalResistanceAttribute())
 	{
 		NewValue = FMath::Max(NewValue, 0.f);
 		NewValue = FMath::Floor(NewValue);
@@ -191,7 +206,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 					bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked);
+					bool bIsResisted = UAuraAbilitySystemLibrary::IsResistedHit(Props.EffectContextHandle);
+					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked, bIsResisted);
 				}
 			}
 		}
@@ -216,3 +232,8 @@ GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, MaxMana)
 
 GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Health)
 GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, Mana)
+
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, FireResistance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, LightningResistance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, ArcaneResistance)
+GAMEPLAY_ATTRIBUTE_DEF(UAuraAttributeSet, PhysicalResistance)

@@ -43,9 +43,13 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 8;
 		}
+		if (bIsResistedHit)
+		{
+			RepBits |= 1 << 9;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 9);
+	Ar.SerializeBits(&RepBits, 10);
 
 	if (RepBits & (1 << 0))
 	{
@@ -94,6 +98,10 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 	if (RepBits & (1 << 8))
 	{
 		Ar << bIsBlockedHit;
+	}
+	if (RepBits & (1 << 9))
+	{
+		Ar << bIsResistedHit;
 	}
 
 	if (Ar.IsLoading())

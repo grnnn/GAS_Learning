@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+struct FGameplayTag;
 class UAnimMontage;
 
 // This class does not need to be modified.
@@ -27,6 +28,7 @@ public:
 	virtual int32 GetCombatLevel();
 	virtual FVector GetCombatSocketLocation();
 	virtual void Die() = 0;
+	virtual TArray<FGameplayTag> GetResistances();
 	
 	UFUNCTION(BlueprintCallable)
 	virtual void SetFacingLocation(const FVector& Location);

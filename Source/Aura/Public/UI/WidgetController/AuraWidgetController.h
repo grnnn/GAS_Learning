@@ -8,6 +8,7 @@
 
 class UAttributeSet;
 class UAbilitySystemComponent;
+class ICombatInterface;
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -19,15 +20,18 @@ struct FWidgetControllerParams
 		, PlayerState(nullptr)
 		, AbilitySystemComponent(nullptr)
 		, AttributeSet(nullptr)
+		, PlayerCombatInterface(nullptr)
 	{
 	}
 
 	FWidgetControllerParams(APlayerController* InPlayerController, APlayerState* InPlayerState,
-							UAbilitySystemComponent* InAbilitySystemComponent, UAttributeSet* InAttributeSet)
+							UAbilitySystemComponent* InAbilitySystemComponent, UAttributeSet* InAttributeSet,
+							ICombatInterface* InPlayerCombatInterface)
 		: PlayerController(InPlayerController)
 		, PlayerState(InPlayerState)
 		, AbilitySystemComponent(InAbilitySystemComponent)
 		, AttributeSet(InAttributeSet)
+		, PlayerCombatInterface(InPlayerCombatInterface)
 	{
 	}
 
@@ -42,6 +46,8 @@ struct FWidgetControllerParams
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
+
+	ICombatInterface* PlayerCombatInterface = nullptr;
 };
 
 /**
@@ -73,4 +79,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="Widget Controller")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	ICombatInterface* PlayerCombatInterface;
 };

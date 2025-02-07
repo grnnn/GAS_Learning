@@ -3,6 +3,7 @@
 
 #include "UI/HUD/AuraHUD.h"
 
+#include "Interaction/CombatInterface.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -32,7 +33,8 @@ UAttributeMenuWidgetController* AAuraHUD::CreateAttributeMenuWcOnce(const FWidge
 }
 
 void AAuraHUD::InitOverlay(APlayerController* PlayerController, APlayerState* PlayerState,
-                           UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet)
+                           UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet,
+                           ICombatInterface* PlayerCombatInterface)
 {
 	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass is not set in BP_AuraHUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("OverlayWidgetControllerClass is not set in BP_AuraHUD"));
@@ -40,7 +42,7 @@ void AAuraHUD::InitOverlay(APlayerController* PlayerController, APlayerState* Pl
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
 	OverlayWidget = Cast<UAuraUserWidget>(Widget);
 
-	const FWidgetControllerParams Params(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
+	const FWidgetControllerParams Params(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet, PlayerCombatInterface);
 	auto WidgetController = CreateOverlayWcOnce(Params);
 
 	OverlayWidget->SetWidgetController(WidgetController);

@@ -6,6 +6,7 @@
 #include "GameplayEffectExecutionCalculation.h"
 #include "GecDamage.generated.h"
 
+class ICombatInterface;
 /**
  * 
  */
@@ -21,5 +22,8 @@ public:
 
 private:
 	static float GetAttributeValue(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	                              const FAggregatorEvaluateParameters& EvalParams, const FGameplayEffectAttributeCaptureDefinition& CaptureDef);
+	                               const FAggregatorEvaluateParameters& EvalParams, const FGameplayEffectAttributeCaptureDefinition& CaptureDef);
+
+	static float GetResistanceValue(const FGameplayTag& ResistanceType, ICombatInterface* Target,
+									const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FAggregatorEvaluateParameters& EvalParams); 
 };

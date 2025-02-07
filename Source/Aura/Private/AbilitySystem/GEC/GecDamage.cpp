@@ -5,9 +5,9 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
-
 #include "AbilitySystem/AuraAbilityTypes.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Interaction/CombatInterface.h"
 
 struct AuraDamageStatics
 {
@@ -17,15 +17,23 @@ struct AuraDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ArcaneResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance);
 	
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, LightningResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArcaneResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, PhysicalResistance, Target, false);
 	}
 };
 
@@ -43,6 +51,10 @@ UGecDamage::UGecDamage()
 	RelevantAttributesToCapture.Add(GetDamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(GetDamageStatics().CriticalHitDamageDef);
 	RelevantAttributesToCapture.Add(GetDamageStatics().CriticalHitResistanceDef);
+	RelevantAttributesToCapture.Add(GetDamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(GetDamageStatics().LightningResistanceDef);
+	RelevantAttributesToCapture.Add(GetDamageStatics().ArcaneResistanceDef);
+	RelevantAttributesToCapture.Add(GetDamageStatics().PhysicalResistanceDef);
 }
 
 void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -52,6 +64,7 @@ void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionPara
 	auto TargetAsc = ExecutionParams.GetTargetAbilitySystemComponent();
 	auto SourceActor = SourceAsc ? SourceAsc->GetOwner() : nullptr;
 	auto TargetActor = TargetAsc ? TargetAsc->GetOwner() : nullptr;
+	auto TargetCombatInterface = Cast<ICombatInterface>(TargetActor);
 	auto Spec = ExecutionParams.GetOwningSpec();
 	auto Context = static_cast<FAuraGameplayEffectContext*>(Spec.GetContext().Get());
 
@@ -59,7 +72,18 @@ void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionPara
 	EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 	
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
+	float Damage = 0.f;
+	bool bIsResisted = false;
+	for (auto TypeToResistance : FAuraGameplayTags::Get().DamageTypesToResistances)
+	{
+		float Resistance = GetResistanceValue(TypeToResistance.Value, TargetCombatInterface, ExecutionParams, EvalParams);
+		Damage += (Spec.GetSetByCallerMagnitude(TypeToResistance.Key, false) - Resistance);
+
+		if (Resistance > 0)
+		{
+			bIsResisted = true;
+		}
+	}
 	
 	float TargetArmor = GetAttributeValue(ExecutionParams, EvalParams, GetDamageStatics().ArmorDef);
 	float ArmorPenetration = GetAttributeValue(ExecutionParams, EvalParams, GetDamageStatics().ArmorPenetrationDef);
@@ -88,6 +112,7 @@ void UGecDamage::Execute_Implementation(const FGameplayEffectCustomExecutionPara
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 	Context->SetIsCriticalHit(bIsCriticalHit);
 	Context->SetIsBlockedHit(bIsBlock);
+	Context->SetIsResistedHit(bIsResisted);
 }
 
 float UGecDamage::GetAttributeValue(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -96,4 +121,40 @@ float UGecDamage::GetAttributeValue(const FGameplayEffectCustomExecutionParamete
 	float Value = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvalParams, Value);
 	return FMath::Max(0.f, FMath::Floor(Value));
+}
+
+float UGecDamage::GetResistanceValue(const FGameplayTag& ResistanceType, ICombatInterface* Target,
+	const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FAggregatorEvaluateParameters& EvalParams)
+{
+	if (not Target->GetResistances().Contains(ResistanceType))
+	{
+		return 0.f;
+	}
+	
+	FGameplayEffectAttributeCaptureDefinition Capture;
+	if (ResistanceType == FGameplayTag(FAuraGameplayTags::Get().Attributes_Resistance_Fire))
+	{
+		Capture = GetDamageStatics().FireResistanceDef;
+	}
+	else if (ResistanceType == FGameplayTag(FAuraGameplayTags::Get().Attributes_Resistance_Lightning))
+	{
+		Capture = GetDamageStatics().LightningResistanceDef;
+	}
+	else if (ResistanceType == FGameplayTag(FAuraGameplayTags::Get().Attributes_Resistance_Arcane))
+	{
+		Capture = GetDamageStatics().ArcaneResistanceDef;
+	}
+	else if (ResistanceType == FGameplayTag(FAuraGameplayTags::Get().Attributes_Resistance_Physical))
+	{
+		Capture = GetDamageStatics().PhysicalResistanceDef;
+	}
+
+	if (Capture != FGameplayEffectAttributeCaptureDefinition())
+	{
+		float Value = 0.f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(Capture, EvalParams, Value);
+		return FMath::Max(0.f, FMath::Floor(Value));
+	}
+
+	return 0.f;
 }

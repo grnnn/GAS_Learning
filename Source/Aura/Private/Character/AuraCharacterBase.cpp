@@ -63,6 +63,11 @@ void AAuraCharacterBase::Die()
 	MulticastHandleDeath();
 }
 
+TArray<FGameplayTag> AAuraCharacterBase::GetResistances()
+{
+	return Resistances;
+}
+
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

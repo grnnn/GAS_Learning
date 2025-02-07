@@ -43,9 +43,12 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 	FHitResult HitResult;
 	HitResult.Location = TargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
+
 	auto SpecHandle = SourceAsc->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-	const float ProjectileDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Damage, ProjectileDamage);
+	for (auto Pair : DamageModifiers)
+	{
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Pair.Value.GetValueAtLevel(GetAbilityLevel()));
+	}
 	Projectile->DamageEffect = SpecHandle;
 
 	Projectile->FinishSpawning(SpawnTransform);

@@ -30,6 +30,11 @@
 	Get##AttrName##.BindStatic(Get##AttrName##Attribute);	\
 	TagsToAttributes.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##AttrName##);
 
+#define GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(AttrName, TagSet, FieldName) \
+	FGetGameplayAttribute Get##FieldName##;	\
+	Get##FieldName##.BindStatic(Get##FieldName##Attribute);	\
+	TagsToAttributes.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##FieldName##);
+
 #define GAMEPLAY_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
@@ -139,6 +144,26 @@ public:
 	// GAMEPLAY_ATTRIBUTE_DECL(MaxMana, "Vital Attributes")
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Vital Attributes") FGameplayAttributeData MaxMana; UFUNCTION() void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
 	GAMEPLAY_ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana)
+
+	/**
+	* Resistance Attributes
+	*/
+	
+	// GAMEPLAY_ATTRIBUTE_DECL(FireResistance, "Resistances")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Resistances") FGameplayAttributeData FireResistance; UFUNCTION() void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance);
+	GAMEPLAY_ATTRIBUTE_ACCESSORS(UAuraAttributeSet, FireResistance)
+
+	// GAMEPLAY_ATTRIBUTE_DECL(LightningResistance, "Resistances")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_LightningResistance, Category = "Resistances") FGameplayAttributeData LightningResistance; UFUNCTION() void OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance);
+	GAMEPLAY_ATTRIBUTE_ACCESSORS(UAuraAttributeSet, LightningResistance)
+	
+	//GAMEPLAY_ATTRIBUTE_DECL(ArcaneResistance, "Resistances")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArcaneResistance, Category = "Resistances") FGameplayAttributeData ArcaneResistance; UFUNCTION() void OnRep_ArcaneResistance(const FGameplayAttributeData& OldArcaneResistance);
+	GAMEPLAY_ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ArcaneResistance)
+	
+	//GAMEPLAY_ATTRIBUTE_DECL(PhysicalResistance, "Resistances")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category = "Resistances") FGameplayAttributeData PhysicalResistance; UFUNCTION() void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance);
+	GAMEPLAY_ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance)
 	
 	/**
 	 *	Vital Attributes

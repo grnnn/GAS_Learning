@@ -39,9 +39,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Aura Ability System Library|Gameplay Effects")
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& ContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "Aura Ability System Library|Gameplay Effects")
+	static bool IsResistedHit(const FGameplayEffectContextHandle& ContextHandle);
+
 	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Effects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle, bool bValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Effects")
 	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle, bool bValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Effects")
+	static void SetIsResistedHit(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle, bool bValue);
 };

@@ -9,4 +9,5 @@ void UAuraWidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 	PlayerState = InWidgetControllerParams.PlayerState;
 	AbilitySystemComponent = InWidgetControllerParams.AbilitySystemComponent;
 	AttributeSet = InWidgetControllerParams.AttributeSet;
+	PlayerCombatInterface = InWidgetControllerParams.PlayerCombatInterface;
 }

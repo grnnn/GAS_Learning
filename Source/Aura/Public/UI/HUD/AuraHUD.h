@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "AuraHUD.generated.h"
 
+class ICombatInterface;
 class UAttributeMenuWidgetController;
 struct FWidgetControllerParams;
 class UOverlayWidgetController;
@@ -29,7 +30,8 @@ public:
 	UAttributeMenuWidgetController* CreateAttributeMenuWcOnce(const FWidgetControllerParams& Params);
 
 	void InitOverlay(APlayerController* PlayerController, APlayerState* PlayerState,
-					 UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet);
+	                 UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet,
+	                 ICombatInterface* PlayerCombatInterface);
 	
 private:
 	UPROPERTY(EditAnywhere)

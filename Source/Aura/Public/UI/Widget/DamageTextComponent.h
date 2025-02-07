@@ -8,6 +8,17 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentCleanedUpDelegate);
 
+UENUM(BlueprintType)
+enum class EDamageState : uint8
+{
+	Normal,
+	Critical,
+	CriticalResisted,
+	Blocked,
+	BlockedResisted,
+	Resisted,
+};
+
 /**
  * 
  */
@@ -18,7 +29,7 @@ class AURA_API UDamageTextComponent : public UWidgetComponent
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDamageText(float Damage, bool bIsCritical, bool bIsBlocked);
+	void SetDamageText(float Damage, EDamageState DamageState);
 
 	UFUNCTION(BlueprintNativeEvent)
 	bool IsDamageTextVisible();

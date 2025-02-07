@@ -87,6 +87,5 @@ void AAuraPlayableCharacter::InitOverlay()
 	auto AuraPlayerState = GetPlayerStateChecked<AAuraPlayerState>();
 	check(AuraPlayerState);
 
-	HUD->InitOverlay(AuraPlayerController, AuraPlayerState, GetAbilitySystemComponent(), GetAttributeSet());
-	
+	HUD->InitOverlay(AuraPlayerController, AuraPlayerState, GetAbilitySystemComponent(), GetAttributeSet(), Cast<ICombatInterface>(this));
 }

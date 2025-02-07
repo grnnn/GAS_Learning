@@ -12,8 +12,10 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 public:
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsBlockedHit() const { return bIsBlockedHit; }
+	bool IsResistedHit() const { return bIsResistedHit; }
 	void SetIsCriticalHit(bool bValue) { bIsCriticalHit = bValue; }
 	void SetIsBlockedHit(bool bValue) { bIsBlockedHit = bValue; }
+	void SetIsResistedHit(bool bValue) { bIsResistedHit = bValue; }
 	
 	virtual UScriptStruct* GetScriptStruct() const
 	{
@@ -41,6 +43,9 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bIsResistedHit = false;
 };
 
 template<>

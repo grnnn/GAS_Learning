@@ -4,11 +4,9 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 #include "AbilitySystemComponent.h"
-
 #include "AbilitySystem/AuraAbilityTypes.h"
-
 #include "Game/AuraGameModeBase.h"
-
+#include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
@@ -23,7 +21,8 @@ UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(
 			auto Ps = Pc->GetPlayerState<AAuraPlayerState>();
 			auto AttributeSet = Ps->GetAttributeSet();
 			auto Asc = Ps->GetAbilitySystemComponent();
-			return Hud->CreateOverlayWcOnce({Pc, Ps, Asc, AttributeSet});
+			auto CombatInterface = Cast<ICombatInterface>(Pc->GetPawn());
+			return Hud->CreateOverlayWcOnce({Pc, Ps, Asc, AttributeSet, CombatInterface});
 		}
 	}
 
@@ -39,7 +38,8 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 			auto Ps = Pc->GetPlayerState<AAuraPlayerState>();
 			auto AttributeSet = Ps->GetAttributeSet();
 			auto Asc = Ps->GetAbilitySystemComponent();
-			return Hud->CreateAttributeMenuWcOnce({Pc, Ps, Asc, AttributeSet});
+			auto CombatInterface = Cast<ICombatInterface>(Pc->GetPawn());
+			return Hud->CreateAttributeMenuWcOnce({Pc, Ps, Asc, AttributeSet, CombatInterface});
 		}
 	}
 
@@ -70,6 +70,12 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(UObject* WorldContex
 		EffectContext = AscInput->MakeEffectContext();
 		EffectContext.AddSourceObject(AActor);
 		SpecHandle = AscInput->MakeOutgoingSpec(AuraGm->CharacterClassInfo->VitalAttributes, Level, EffectContext);
+		AscInput->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+		// resistance attributes
+		EffectContext = AscInput->MakeEffectContext();
+		EffectContext.AddSourceObject(AActor);
+		SpecHandle = AscInput->MakeOutgoingSpec(AuraGm->CharacterClassInfo->ResistanceAttributes, Level, EffectContext);
 		AscInput->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	}
 	
@@ -109,6 +115,16 @@ bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle&
 	return false;
 }
 
+bool UAuraAbilitySystemLibrary::IsResistedHit(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (auto Context = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return Context->IsResistedHit();
+	}
+
+	return false;
+}
+
 void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& ContextHandle, bool bValue)
 {
 	if (auto Context = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
@@ -122,5 +138,13 @@ void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& Co
 	if (auto Context = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
 	{
 		Context->SetIsBlockedHit(bValue);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetIsResistedHit(FGameplayEffectContextHandle& ContextHandle, bool bValue)
+{
+	if (auto Context = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		Context->SetIsResistedHit(bValue);
 	}
 }
