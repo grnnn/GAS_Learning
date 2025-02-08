@@ -14,11 +14,9 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	check(PlayerCombatInterface);
 	
 	auto AuraAs = CastChecked<UAuraAttributeSet>(AttributeSet);
-	auto ResistancesTag = FAuraGameplayTags::Get().Attributes_Resistance;
-	for (auto& Pair : AuraAs->TagsToAttributes)
+	for (auto& Pair : AuraAs->TagsToAttributeGetters)
 	{
-		if (!Pair.Key.MatchesAny(ResistancesTag.GetSingleTagContainer()) || PlayerCombatInterface->GetResistances().Contains(Pair.Key))
-			BroadcastAttributeInfo(Pair.Key, Pair.Value.Execute());
+		BroadcastAttributeInfo(Pair.Key, Pair.Value.Execute());
 	}
 }
 
@@ -26,16 +24,13 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	auto AuraAs = CastChecked<UAuraAttributeSet>(AttributeSet);
 	auto ResistancesTag = FAuraGameplayTags::Get().Attributes_Resistance;
-	for (auto Pair : AuraAs->TagsToAttributes)
+	for (auto Pair : AuraAs->TagsToAttributeGetters)
 	{
-		if (!Pair.Key.MatchesAny(ResistancesTag.GetSingleTagContainer()) || PlayerCombatInterface->GetResistances().Contains(Pair.Key))
-		{
-			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value.Execute()).AddLambda(
-				[this, Pair, AuraAs](const FOnAttributeChangeData& Data)
-				{
-					BroadcastAttributeInfo(Pair.Key, Pair.Value.Execute());
-				});
-		}
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value.Execute()).AddLambda(
+			[this, Pair, AuraAs](const FOnAttributeChangeData& Data)
+			{
+				BroadcastAttributeInfo(Pair.Key, Pair.Value.Execute());
+			});
 	}
 }
 

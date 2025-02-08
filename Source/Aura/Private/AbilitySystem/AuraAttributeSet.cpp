@@ -102,6 +102,13 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 		NewValue = FMath::Max(NewValue, 0.f);
 		NewValue = FMath::Floor(NewValue);
 	}
+	else if (Attribute == GetFireResistanceAttribute() ||
+			 Attribute == GetLightningResistanceAttribute() ||
+			 Attribute == GetArcaneResistanceAttribute() ||
+			 Attribute == GetPhysicalResistanceAttribute())
+	{
+		NewValue = FMath::Max(NewValue, 0.f);
+	}
 }
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
@@ -135,6 +142,10 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		{
 			Props.Source.Character = Cast<ACharacter>(Controller->GetPawn());
 		}
+		if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.Source.Actor))
+		{
+			Props.Source.CombatInterface = CombatInterface;
+		}
 	}
 
 	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
@@ -143,6 +154,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		Props.Target.Controller = Data.Target.AbilityActorInfo->PlayerController.Get();
 		Props.Target.Character = Cast<ACharacter>(Props.Target.Actor);
 		Props.Target.AbilitySystemComponent = Data.Target.AbilityActorInfo->AbilitySystemComponent.Get();
+		Props.Target.CombatInterface = Cast<ICombatInterface>(Props.Target.Actor);
 	}
 }
 
@@ -175,6 +187,21 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
         NewMaxMana = FMath::Floor(NewMaxMana);
         SetMaxMana(NewMaxMana);
     }
+	else if (Data.EvaluatedData.Attribute == GetFireResistanceAttribute() ||
+			 Data.EvaluatedData.Attribute == GetLightningResistanceAttribute() ||
+			 Data.EvaluatedData.Attribute == GetArcaneResistanceAttribute() ||
+			 Data.EvaluatedData.Attribute == GetPhysicalResistanceAttribute())
+	{
+		FGameplayTag ResistanceTag = AttributesToTags.FindChecked(Data.EvaluatedData.Attribute);
+		FSetGameplayAttribute SetResistance = TagsToAttributeSetters.FindChecked(ResistanceTag);
+		float NewResistance = FMath::Max(Data.EvaluatedData.Magnitude, 0.f);
+		if (Props.Target.CombatInterface->GetResistances().Contains(ResistanceTag))
+			NewResistance = FMath::Floor(NewResistance);
+		else
+			NewResistance = 0.f;
+		
+		SetResistance.Execute(NewResistance);
+	}
 	else if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
 		float LocalIncomingDamage = FMath::Floor(GetIncomingDamage());

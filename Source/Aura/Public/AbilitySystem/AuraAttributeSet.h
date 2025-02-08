@@ -28,12 +28,16 @@
 #define GAMEPLAY_ATTRIBUTE_TAG_MAPPING(AttrName, TagSet) \
 	FGetGameplayAttribute Get##AttrName##;	\
 	Get##AttrName##.BindStatic(Get##AttrName##Attribute);	\
-	TagsToAttributes.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##AttrName##);
+	TagsToAttributeGetters.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##AttrName##); \
+	AttributesToTags.Add(Get##AttrName##Attribute(), FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##); \
+	TagsToAttributeSetters.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, FSetGameplayAttribute::CreateUObject(this, &UAuraAttributeSet::Set##AttrName##));
 
 #define GAMEPLAY_ATTRIBUTE_MANUAL_TAG_MAPPING(AttrName, TagSet, FieldName) \
 	FGetGameplayAttribute Get##FieldName##;	\
 	Get##FieldName##.BindStatic(Get##FieldName##Attribute);	\
-	TagsToAttributes.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##FieldName##);
+	TagsToAttributeGetters.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, Get##FieldName##); \
+	AttributesToTags.Add(Get##FieldName##Attribute(), FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##); \
+	TagsToAttributeSetters.Add(FAuraGameplayTags::Get().Attributes_##TagSet##_##AttrName##, FSetGameplayAttribute::CreateUObject(this, &UAuraAttributeSet::Set##FieldName##));
 
 #define GAMEPLAY_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -42,6 +46,9 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 DECLARE_DELEGATE_RetVal(FGameplayAttribute, FGetGameplayAttribute);
+DECLARE_DELEGATE_OneParam(FSetGameplayAttribute, float);
+
+class ICombatInterface;
 
 USTRUCT()
 struct FEffectProperty
@@ -52,6 +59,7 @@ struct FEffectProperty
 	UPROPERTY() AActor* Actor = nullptr;
 	UPROPERTY() AController* Controller = nullptr;
 	UPROPERTY() ACharacter* Character = nullptr;
+	ICombatInterface* CombatInterface = nullptr;
 };
 
 USTRUCT()
@@ -79,7 +87,9 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	
-	TMap<FGameplayTag, FGetGameplayAttribute> TagsToAttributes;
+	TMap<FGameplayTag, FGetGameplayAttribute> TagsToAttributeGetters;
+	TMap<FGameplayAttribute, FGameplayTag> AttributesToTags;
+	TMap<FGameplayTag, FSetGameplayAttribute> TagsToAttributeSetters;
 
 	/**
 	 *	Primary Attributes
