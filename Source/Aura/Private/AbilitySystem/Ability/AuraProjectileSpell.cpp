@@ -20,13 +20,16 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation)
 {
+	if (not GetAvatarActorFromActorInfo()->HasAuthority())
+		return;
+	
 	auto CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (not CombatInterface)
 		return;
 	
 	const FVector CombatLocation = CombatInterface->GetCombatSocketLocation();
 	FRotator Rotation = (TargetLocation - CombatLocation).Rotation();
-	Rotation.Pitch = 0; // We don't want the projectile to be aimed up or down
+	//Rotation.Pitch = 0; // We don't want the projectile to be aimed up or down
 	
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(CombatLocation);
@@ -34,7 +37,7 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 	auto Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform,
 		GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
+	
 	auto SourceAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	auto EffectContextHandle = SourceAsc->MakeEffectContext();
 	EffectContextHandle.SetAbility(this);
@@ -43,13 +46,13 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 	FHitResult HitResult;
 	HitResult.Location = TargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
-
+	
 	auto SpecHandle = SourceAsc->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 	for (auto Pair : DamageModifiers)
 	{
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Pair.Value.GetValueAtLevel(GetAbilityLevel()));
 	}
 	Projectile->DamageEffect = SpecHandle;
-
+	
 	Projectile->FinishSpawning(SpawnTransform);
 }

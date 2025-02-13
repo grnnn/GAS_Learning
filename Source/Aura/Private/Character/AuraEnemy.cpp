@@ -18,6 +18,10 @@
 
 AAuraEnemy::AAuraEnemy()
 {
+	bReplicates = true;
+	bAlwaysRelevant = true;
+	SetReplicatingMovement(true);
+	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
@@ -49,8 +53,16 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 void AAuraEnemy::InitializeDefaultData()
 {
-	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, Class, Level);
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	if (HasAuthority())
+	{
+		UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, Class, Level);
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	}
+}
+
+void AAuraEnemy::HandleDeath()
+{
+	HealthBar->SetVisibility(false);
 }
 
 void AAuraEnemy::CreateEnemyWidgetController()

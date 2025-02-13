@@ -34,7 +34,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCh
 	bool bIsBlocked, bool bIsResisted)
 {
 	check(DamageTextPoolContainer);
-	if (not IsValid(TargetCharacter) || not IsValid(DamageTextPoolContainer))
+	if ((not IsValid(TargetCharacter) || not IsValid(DamageTextPoolContainer)) && IsLocalController())
 		return;
 
 	EDamageState DamageState = EDamageState::Normal;

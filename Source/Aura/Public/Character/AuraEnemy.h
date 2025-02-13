@@ -43,6 +43,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultData() override;
+	virtual void HandleDeath() override;
 
 	void CreateEnemyWidgetController();
 	void RegisterGameplayTagEvents();

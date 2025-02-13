@@ -228,8 +228,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 			if (Props.Source.Character != Props.Target.Character)
 			{
-				auto PlayerController = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.Source.Character, 0));
-				if (PlayerController)
+				if (auto PlayerController = Cast<AAuraPlayerController>(Props.Source.Controller))
 				{
 					bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 					bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);

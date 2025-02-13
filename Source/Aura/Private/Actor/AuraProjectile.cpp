@@ -16,6 +16,7 @@ AAuraProjectile::AAuraProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+	bAlwaysRelevant = true;
 
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>("Root");
 	SetRootComponent(CollisionSphere);
@@ -57,14 +58,21 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	auto Context = DamageEffect.Data.IsValid() ? DamageEffect.Data.Get()->GetContext() : FGameplayEffectContextHandle();
+	if (Context.GetEffectCauser() == OtherActor || not OtherActor->HasAuthority())
+	{
+		return;
+	}
+	
 	Impact();
-
-	if (HasAuthority())
+	
+	if (HasAuthority() && OtherActor->HasAuthority())
 	{
 		TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
 		if (TargetAsc)
 		{
-			TargetAsc->ApplyGameplayEffectSpecToSelf(*DamageEffect.Data.Get());
+			FScopedPredictionWindow ScopedPrediction(TargetAsc);
+			TargetAsc->ApplyGameplayEffectSpecToSelf(*DamageEffect.Data.Get());//, TargetAsc->ScopedPredictionKey);
 		}
 		
 		Destroy();

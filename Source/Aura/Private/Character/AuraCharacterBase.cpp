@@ -50,6 +50,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+	HandleDeath();
 }
 
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage()

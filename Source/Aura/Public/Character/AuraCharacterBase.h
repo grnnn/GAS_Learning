@@ -37,6 +37,7 @@ protected:
 	virtual void InitAbilityActorInfo() {};
 	virtual void AddCharacterAbilities();
 	virtual FVector GetCombatSocketLocation() override;
+	virtual void HandleDeath() {};
 	
 	virtual void SetFacingLocation(const FVector& Location) override {};
 
