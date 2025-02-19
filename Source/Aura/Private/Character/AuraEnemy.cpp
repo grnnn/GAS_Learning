@@ -4,15 +4,15 @@
 #include "Character/AuraEnemy.h"
 
 #include "AuraGameplayTags.h"
-
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AI/AuraAIController.h"
 #include "Aura/Aura.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
-
 #include "GameFramework/CharacterMovementComponent.h"
-
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/EnemyWidgetController.h"
 
@@ -27,9 +27,29 @@ AAuraEnemy::AAuraEnemy()
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+}
+
+void AAuraEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (not HasAuthority())
+		return;
+	
+	AiController = Cast<AAuraAIController>(NewController);
+	AiController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	AiController->RunBehaviorTree(BehaviorTree);
+
+	SetDefaultBlackboardValues();
 }
 
 void AAuraEnemy::BeginPlay()
@@ -89,7 +109,17 @@ void AAuraEnemy::RegisterGameplayTagEvents()
 		{
 			bHitReacting = Count > 0;
 			GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0 : BaseWalkSpeed;
+			AiController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"), bHitReacting);
 		});
+}
+
+void AAuraEnemy::SetDefaultBlackboardValues()
+{
+	if (AiController && AiController->GetBlackboardComponent())
+	{
+		AiController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"), false);
+		AiController->GetBlackboardComponent()->SetValueAsBool(FName("IsRangedAttacker"), Class != ECharacterClass::Warrior);
+	}
 }
 
 void AAuraEnemy::Highlight()

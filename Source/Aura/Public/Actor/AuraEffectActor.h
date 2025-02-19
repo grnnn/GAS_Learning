@@ -43,6 +43,9 @@ struct FGameplayEffectApplication
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bDestroyOnEffectRemoval = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FName> ActorTagsToExclude;
 };
 
 UCLASS()

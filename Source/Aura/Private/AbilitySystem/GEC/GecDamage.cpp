@@ -126,7 +126,7 @@ float UGecDamage::GetAttributeValue(const FGameplayEffectCustomExecutionParamete
 float UGecDamage::GetResistanceValue(const FGameplayTag& ResistanceType, ICombatInterface* Target,
 	const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FAggregatorEvaluateParameters& EvalParams)
 {
-	if (not Target->GetResistances().Contains(ResistanceType))
+	if (!Target || !Target->GetResistances().Contains(ResistanceType))
 	{
 		return 0.f;
 	}

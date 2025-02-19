@@ -18,7 +18,6 @@ AAuraEffectActor::AAuraEffectActor()
 void AAuraEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AAuraEffectActor::ApplyEffectToActor(AActor* Actor, TSubclassOf<UGameplayEffect> EffectClass, EEffectRemovalPolicy RemovalPolicy)
@@ -45,6 +44,12 @@ void AAuraEffectActor::OnOverlap(AActor* Actor)
 	bool DestroyAfterApplyingEffects = false;
 	for (auto EffectApplication : GameplayEffects)
 	{
+		for (auto Tag : EffectApplication.ActorTagsToExclude)
+		{
+			if (Actor->ActorHasTag(Tag))
+				return;
+		}
+		
 		if (EffectApplication.EffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 		{
 			ApplyEffectToActor(Actor, EffectApplication.GameplayEffect, EffectApplication.EffectRemovalPolicy);
@@ -64,6 +69,12 @@ void AAuraEffectActor::OnEndOverlap(AActor* Actor)
 	bool DestroyAfterRemovingEffects = false;
 	for (auto EffectApplication : GameplayEffects)
 	{
+		for (auto Tag : EffectApplication.ActorTagsToExclude)
+		{
+			if (Actor->ActorHasTag(Tag))
+				return;
+		}
+		
 		if (EffectApplication.EffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 		{
 			check(EffectApplication.EffectRemovalPolicy == EEffectRemovalPolicy::DoNotRemove);
