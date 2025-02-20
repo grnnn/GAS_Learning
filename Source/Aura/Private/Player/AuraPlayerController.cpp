@@ -192,8 +192,12 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				{
 					MovementSpline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);
 				}
-				CachedDestination = NavigationPath->PathPoints.Last();
-				MovementSpline->UpdateSpline();
+
+				if (not NavigationPath->PathPoints.IsEmpty())
+				{
+					CachedDestination = NavigationPath->PathPoints.Last();
+					MovementSpline->UpdateSpline();
+				}
 			}
 		}
 		FollowTime = 0.f; // incremented in AbilityInputTagHeld
