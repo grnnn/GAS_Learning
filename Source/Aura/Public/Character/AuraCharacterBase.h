@@ -28,7 +28,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
-	virtual UAnimMontage* GetHitReactMontage() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
 	virtual TArray<FGameplayTag> GetResistances() override;
 
@@ -36,10 +36,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() {};
 	virtual void AddCharacterAbilities();
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation() override;
 	virtual void HandleDeath() {};
-	
-	virtual void SetFacingLocation(const FVector& Location) override {};
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> EffectClass, float Level = 1.f);
 	virtual void InitializeDefaultData();

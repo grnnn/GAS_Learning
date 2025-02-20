@@ -53,7 +53,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	HandleDeath();
 }
 
-UAnimMontage* AAuraCharacterBase::GetHitReactMontage()
+UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;
 }
@@ -83,7 +83,7 @@ void AAuraCharacterBase::AddCharacterAbilities()
 	AuraAsc->AddCharacterAbilities(StartupAbilities);
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	check(Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);

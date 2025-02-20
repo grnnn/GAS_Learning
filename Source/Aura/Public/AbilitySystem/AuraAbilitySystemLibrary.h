@@ -31,7 +31,7 @@ public:
 	static void InitializeDefaultAttributes(UObject* WorldContextObject, UAbilitySystemComponent* AscInput, ECharacterClass Class, float Level);
 
 	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Character Class Defaults")
-	static void GiveStartupAbilities(UObject* WorldContextObject, UAbilitySystemComponent* AscInOut);
+	static void GiveStartupAbilities(UObject* WorldContextObject, UAbilitySystemComponent* AscInOut, ECharacterClass Class, float Level);
 
 	UFUNCTION(BlueprintPure, Category = "Aura Ability System Library|Gameplay Effects")
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& ContextHandle);

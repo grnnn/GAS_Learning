@@ -76,7 +76,7 @@ void AAuraEnemy::InitializeDefaultData()
 	if (HasAuthority())
 	{
 		UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, Class, Level);
-		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, Class, Level);
 	}
 }
 
@@ -138,6 +138,16 @@ void AAuraEnemy::UnHighlight()
 	check(Weapon);
 	Weapon->SetRenderCustomDepth(false);
 	Weapon->SetCustomDepthStencilValue(0);
+}
+
+void AAuraEnemy::SetCombatTarget_Implementation(AActor* InTarget)
+{
+	CombatTarget = InTarget;
+}
+
+AActor* AAuraEnemy::GetCombatTarget_Implementation()
+{
+	return CombatTarget;
 }
 
 int32 AAuraEnemy::GetCombatLevel()

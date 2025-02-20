@@ -11,7 +11,7 @@ class AComponentPoolContainer;
 class UDamageTextComponent;
 class UAuraInputConfig;
 struct FInputActionValue;
-class IIHightlightable;
+class IEnemyInterface;
 class UInputMappingContext;
 class UInputAction;
 class UAuraAbilitySystemComponent;
@@ -64,8 +64,8 @@ private:
 	TObjectPtr<UAuraInputConfig> InputConfig;
 
 	// member vars
-	TScriptInterface<IIHightlightable> LastCursorHit;
-	TScriptInterface<IIHightlightable> CurrentCursorHit;
+	TScriptInterface<IEnemyInterface> LastCursorHit;
+	TScriptInterface<IEnemyInterface> CurrentCursorHit;
 
 	UPROPERTY()
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;

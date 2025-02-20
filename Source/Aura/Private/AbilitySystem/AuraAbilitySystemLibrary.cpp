@@ -81,7 +81,7 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(UObject* WorldContex
 	
 }
 
-void UAuraAbilitySystemLibrary::GiveStartupAbilities(UObject* WorldContextObject, UAbilitySystemComponent* AscInOut)
+void UAuraAbilitySystemLibrary::GiveStartupAbilities(UObject* WorldContextObject, UAbilitySystemComponent* AscInOut, ECharacterClass Class, float Level)
 {
 	auto AuraGm = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (not AuraGm)
@@ -90,7 +90,14 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(UObject* WorldContextObject
 	auto SharedAbilities = AuraGm->CharacterClassInfo->SharedAbilities;
 	for (auto AbilityClass : SharedAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+		FGameplayAbilitySpec AbilitySpec(AbilityClass, Level);
+		AscInOut->GiveAbility(AbilitySpec);
+	}
+
+	auto ClassAbilities = AuraGm->CharacterClassInfo->GetClassDefaults(Class).ClassAbilities;
+	for (auto AbilityClass : ClassAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(AbilityClass, Level);
 		AscInOut->GiveAbility(AbilitySpec);
 	}
 }

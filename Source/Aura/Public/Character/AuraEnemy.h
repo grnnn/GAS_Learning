@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/AuraCharacterBase.h"
-#include "Interaction/IHightlightable.h"
+#include "Interaction/EnemyInterface.h"
 
 #include "AuraEnemy.generated.h"
 
@@ -18,7 +18,7 @@ class UEnemyWidgetController;
  * 
  */
 UCLASS()
-class AURA_API AAuraEnemy : public AAuraCharacterBase, public IIHightlightable
+class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 {
 	GENERATED_BODY()
 public:
@@ -27,9 +27,11 @@ public:
 	// AActor
 	virtual void PossessedBy(AController* NewController) override;
 
-	// IIHightlightable
+	// IEnemyInterface
 	virtual void Highlight() override;
 	virtual void UnHighlight() override;
+	virtual void SetCombatTarget_Implementation(AActor* InTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() override;
 
 	// ICombatInterface
 	virtual int32 GetCombatLevel() override;
@@ -43,6 +45,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float DeathLifespan = 5.f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	TObjectPtr<AActor> CombatTarget;
 
 protected:
 	virtual void BeginPlay() override;
