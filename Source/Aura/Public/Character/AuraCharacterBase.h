@@ -31,6 +31,8 @@ public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
 	virtual TArray<FGameplayTag> GetResistances() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,4 +82,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	bool bIsDead = false;
 };

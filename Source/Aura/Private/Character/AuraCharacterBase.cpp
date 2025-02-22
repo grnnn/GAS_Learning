@@ -51,6 +51,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
 	HandleDeath();
+	bIsDead = true;
 }
 
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
@@ -67,6 +68,16 @@ void AAuraCharacterBase::Die()
 TArray<FGameplayTag> AAuraCharacterBase::GetResistances()
 {
 	return Resistances;
+}
+
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
 }
 
 void AAuraCharacterBase::BeginPlay()

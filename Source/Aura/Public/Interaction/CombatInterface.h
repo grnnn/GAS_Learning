@@ -37,4 +37,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UAnimMontage* GetHitReactMontage();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool IsDead() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AActor* GetAvatar();
 };

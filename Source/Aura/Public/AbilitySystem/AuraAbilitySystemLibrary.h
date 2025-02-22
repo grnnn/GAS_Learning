@@ -50,4 +50,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Effects")
 	static void SetIsResistedHit(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle, bool bValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Mechanics")
+	static void GetLiveActorsWithinRadius(UObject* WorldContextObject, const FVector& Location, float Radius,
+		const TArray<AActor*>& ActorsToIgnore, TArray<AActor*>& OutActors);
 };
