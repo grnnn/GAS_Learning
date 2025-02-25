@@ -228,12 +228,16 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 			if (Props.Source.Character != Props.Target.Character)
 			{
-				if (auto PlayerController = Cast<AAuraPlayerController>(Props.Source.Controller))
+				bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+				bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+				bool bIsResisted = UAuraAbilitySystemLibrary::IsResistedHit(Props.EffectContextHandle);
+				if (auto PlayerControllerFromSource = Cast<AAuraPlayerController>(Props.Source.Controller))
 				{
-					bool bIsCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-					bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-					bool bIsResisted = UAuraAbilitySystemLibrary::IsResistedHit(Props.EffectContextHandle);
-					PlayerController->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked, bIsResisted);
+					PlayerControllerFromSource->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked, bIsResisted);
+				}
+				else if (auto PlayerControllerFromTarget = Cast<AAuraPlayerController>(Props.Target.Controller))
+				{
+					PlayerControllerFromTarget->ShowDamageNumber(Props.Target.Character, LocalIncomingDamage, bIsCritical, bIsBlocked, bIsResisted);
 				}
 			}
 		}

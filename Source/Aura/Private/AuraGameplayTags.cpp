@@ -141,6 +141,19 @@ void FAuraGameplayTags::Initialize()
 			FString("Attack Ability Tag.")
 		);
 
+	GameplayTags.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Montage.Attack.Weapon"),
+			FString("Attack Montage for Weapon.")
+		);
+	GameplayTags.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Montage.Attack.RightHand"),
+			FString("Attack Montage for Right Hand.")
+		);
+	GameplayTags.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Montage.Attack.LeftHand"),
+			FString("Attack Montage for Left Hand.")
+		);
+
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Arcane, GameplayTags.Attributes_Resistance_Arcane);

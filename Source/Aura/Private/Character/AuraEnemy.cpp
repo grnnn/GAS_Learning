@@ -109,7 +109,10 @@ void AAuraEnemy::RegisterGameplayTagEvents()
 		{
 			bHitReacting = Count > 0;
 			GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0 : BaseWalkSpeed;
-			AiController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"), bHitReacting);
+			if (AiController && AiController->GetBlackboardComponent())
+			{
+				AiController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"), bHitReacting);
+			}
 		});
 }
 
