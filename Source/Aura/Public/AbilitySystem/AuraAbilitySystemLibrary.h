@@ -54,4 +54,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Aura Ability System Library|Gameplay Mechanics")
 	static void GetLiveActorsWithinRadius(UObject* WorldContextObject, const FVector& Location, float Radius,
 		const TArray<AActor*>& ActorsToIgnore, TArray<AActor*>& OutActors);
+
+	UFUNCTION(BlueprintPure, Category = "Aura Ability System Library|Gameplay Mechanics")
+	static bool AreActorsFriends(AActor* ActorA, AActor* ActorB);
 };

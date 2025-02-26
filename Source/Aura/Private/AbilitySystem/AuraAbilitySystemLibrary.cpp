@@ -179,3 +179,19 @@ void UAuraAbilitySystemLibrary::GetLiveActorsWithinRadius(UObject* WorldContextO
 		}
 	}
 }
+
+bool UAuraAbilitySystemLibrary::AreActorsFriends(AActor* ActorA, AActor* ActorB)
+{
+	check(ActorA && ActorB);
+
+	static TArray<FName> FriendTags = {"Player", "Enemy"};
+	for (auto Tag : FriendTags)
+	{
+		if (ActorA->ActorHasTag(Tag) && ActorB->ActorHasTag(Tag))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
