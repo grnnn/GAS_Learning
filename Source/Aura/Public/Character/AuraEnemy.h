@@ -32,6 +32,8 @@ public:
 	virtual void UnHighlight() override;
 	virtual void SetCombatTarget_Implementation(AActor* InTarget) override;
 	virtual AActor* GetCombatTarget_Implementation() override;
+	virtual void SetCombatSocketTag_Implementation(FGameplayTag InTag) override;
+	virtual FGameplayTag GetCombatSocketTag_Implementation() override;
 
 	// ICombatInterface
 	virtual int32 GetCombatLevel() override;
@@ -48,6 +50,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	FGameplayTag CombatSocketTag;
 
 protected:
 	virtual void BeginPlay() override;

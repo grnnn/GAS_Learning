@@ -27,7 +27,8 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 	if (not CombatInterface)
 		return;
 	
-	const FVector CombatLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
+	const FVector CombatLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(),
+		FAuraGameplayTags::Get().Montage_Attack_Weapon);
 	FRotator Rotation = (TargetLocation - CombatLocation).Rotation();
 	//Rotation.Pitch = 0; // We don't want the projectile to be aimed up or down
 	

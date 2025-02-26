@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/AuraGameplayAbility.h"
+
+#include "Interaction/CombatInterface.h"
+
 #include "AuraDamageGameplayAbility.generated.h"
 
 /**
@@ -16,6 +19,9 @@ class AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToReceiver(AActor* DamageReceiver);
+
+	UFUNCTION(BlueprintCallable)
+	FTaggedMontage GetAttackMontage(FGameplayTag MontageTag, const TArray<FTaggedMontage>& TaggedMontages) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

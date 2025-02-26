@@ -16,3 +16,22 @@ void UAuraDamageGameplayAbility::ApplyDamageToReceiver(AActor* DamageReciever)
 	auto TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(DamageReciever);
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetAsc);
 }
+
+FTaggedMontage UAuraDamageGameplayAbility::GetAttackMontage(FGameplayTag MontageTag, const TArray<FTaggedMontage>& TaggedMontages) const
+{
+	for (auto Montage : TaggedMontages)
+	{
+		if (Montage.Tag == MontageTag)
+		{
+			return Montage;
+		}
+	}
+
+	int index = FMath::RandRange(0, TaggedMontages.Num() - 1);
+	if (TaggedMontages.IsValidIndex(index))
+	{
+		return TaggedMontages[index];
+	}
+
+	return {};
+}

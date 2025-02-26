@@ -153,6 +153,16 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation()
 	return CombatTarget;
 }
 
+void AAuraEnemy::SetCombatSocketTag_Implementation(FGameplayTag InTag)
+{
+	CombatSocketTag = InTag;
+}
+
+FGameplayTag AAuraEnemy::GetCombatSocketTag_Implementation()
+{
+	return CombatSocketTag;
+}
+
 int32 AAuraEnemy::GetCombatLevel()
 {
 	return Level;

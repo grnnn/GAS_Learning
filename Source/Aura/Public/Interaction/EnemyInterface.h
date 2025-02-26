@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+
 #include "UObject/Interface.h"
 #include "EnemyInterface.generated.h"
 
@@ -26,4 +28,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	AActor* GetCombatTarget();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetCombatSocketTag(FGameplayTag InTag);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FGameplayTag GetCombatSocketTag();
 };
