@@ -42,7 +42,9 @@ void AAuraProjectile::BeginPlay()
 	if (LoopingSound)
 	{
 		LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, RootComponent);
-	}	
+	}
+
+	SpinDirection = FMath::VRand() * RotationSpeed;
 }
 
 void AAuraProjectile::Destroyed()
@@ -53,6 +55,19 @@ void AAuraProjectile::Destroyed()
 	}
 	
 	Super::Destroyed();
+}
+
+void AAuraProjectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsSpinning)
+	{
+		SetActorRotation(GetActorRotation() + FRotator(
+			SpinDirection.X * DeltaTime,
+			SpinDirection.Y * DeltaTime,
+			SpinDirection.Z * DeltaTime));
+	}
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

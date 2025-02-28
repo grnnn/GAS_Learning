@@ -25,9 +25,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle DamageEffect;
 
+	bool bIsSpinning = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RotationSpeed = 50.f;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -56,4 +62,5 @@ private:
 
 	bool bHit = false;
 	UAbilitySystemComponent* TargetAsc = nullptr;
+	FVector SpinDirection;
 };

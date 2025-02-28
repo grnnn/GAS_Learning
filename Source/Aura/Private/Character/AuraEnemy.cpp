@@ -77,6 +77,12 @@ void AAuraEnemy::InitializeDefaultData()
 	{
 		UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, Class, Level);
 		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, Class, Level);
+		
+		for (auto AbilityClass : StartupAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec(AbilityClass, Level);
+			AbilitySystemComponent->GiveAbility(AbilitySpec);
+		}
 	}
 }
 

@@ -18,7 +18,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo ActivationInfo, const FVector& TargetLocation)
+void UAuraProjectileSpell::FireProjectile(const FVector& TargetLocation, const FGameplayTag& SocketTag, bool bSpin)
 {
 	if (not GetAvatarActorFromActorInfo()->HasAuthority())
 		return;
@@ -27,8 +27,7 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 	if (not CombatInterface)
 		return;
 	
-	const FVector CombatLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(),
-		FAuraGameplayTags::Get().Montage_Attack_Weapon);
+	const FVector CombatLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	FRotator Rotation = (TargetLocation - CombatLocation).Rotation();
 	//Rotation.Pitch = 0; // We don't want the projectile to be aimed up or down
 	
@@ -54,6 +53,7 @@ void UAuraProjectileSpell::FireProjectile(const FGameplayAbilityActivationInfo A
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Pair.Value.GetValueAtLevel(GetAbilityLevel()));
 	}
 	Projectile->DamageEffect = SpecHandle;
+	Projectile->bIsSpinning = bSpin;
 	
 	Projectile->FinishSpawning(SpawnTransform);
 }
