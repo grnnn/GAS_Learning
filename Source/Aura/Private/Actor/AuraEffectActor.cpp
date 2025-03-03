@@ -44,9 +44,9 @@ void AAuraEffectActor::OnOverlap(AActor* Actor)
 	bool DestroyAfterApplyingEffects = false;
 	for (auto EffectApplication : GameplayEffects)
 	{
-		for (auto Tag : EffectApplication.ActorTagsToExclude)
+		for (auto Tag : EffectApplication.ActorTagsToInclude)
 		{
-			if (Actor->ActorHasTag(Tag))
+			if (not Actor->ActorHasTag(Tag))
 				return;
 		}
 		
@@ -69,9 +69,9 @@ void AAuraEffectActor::OnEndOverlap(AActor* Actor)
 	bool DestroyAfterRemovingEffects = false;
 	for (auto EffectApplication : GameplayEffects)
 	{
-		for (auto Tag : EffectApplication.ActorTagsToExclude)
+		for (auto Tag : EffectApplication.ActorTagsToInclude)
 		{
-			if (Actor->ActorHasTag(Tag))
+			if (not Actor->ActorHasTag(Tag))
 				return;
 		}
 		

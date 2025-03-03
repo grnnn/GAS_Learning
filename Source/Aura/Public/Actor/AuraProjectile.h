@@ -28,7 +28,7 @@ public:
 	bool bIsSpinning = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RotationSpeed = 50.f;
+	float RotationSpeed = 80.f;
 
 protected:
 	virtual void BeginPlay() override;
