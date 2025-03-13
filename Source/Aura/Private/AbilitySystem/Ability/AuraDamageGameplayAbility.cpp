@@ -21,7 +21,7 @@ FTaggedMontage UAuraDamageGameplayAbility::GetAttackMontage(FGameplayTag Montage
 {
 	for (auto Montage : TaggedMontages)
 	{
-		if (Montage.Tag == MontageTag)
+		if (Montage.MontageTag == MontageTag)
 		{
 			return Montage;
 		}
